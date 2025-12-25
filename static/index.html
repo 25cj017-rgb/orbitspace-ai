@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OrbitSpace AI</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="header">
+    <h1>🚀 OrbitSpace AI</h1>
+    <p>AI-Powered Orbital Safety & Decision Support System</p>
+</div>
+
+<div class="container">
+
+    <div class="card">
+        <h2>Input Parameters</h2>
+
+        <label>Velocity (km/s)</label>
+        <input type="number" id="velocity" placeholder="Enter velocity">
+
+        <label>Altitude (km)</label>
+        <input type="number" id="altitude" placeholder="Enter altitude">
+
+        <label>Debris Size (cm)</label>
+        <input type="number" id="size" placeholder="Enter size">
+
+        <label>Density</label>
+        <input type="number" id="density" placeholder="Enter density">
+
+        <button onclick="predictRisk()">Predict Risk</button>
+    </div>
+
+    <div class="card">
+        <h2>Risk Assessment</h2>
+        <p>Physics-Based Risk:
+            <span class="badge low" id="physicsRisk">Low</span>
+        </p>
+        <p>ML-Predicted Risk:
+            <span class="badge low" id="mlRisk">Low</span>
+        </p>
+    </div>
+
+    <div class="card">
+        <h2>AI Insight</h2>
+        <p id="aiInsight">
+            Based on the given orbital parameters, the debris currently shows a low collision risk.
+            Both physics-based and AI models agree on this assessment.
+        </p>
+
+        <hr>
+        <h3>Risk Level</h3>
+        <div class="risk-bar">
+            <div class="risk-fill" id="riskFill"></div>
+        </div>
+    </div>
+
+</div>
+
+<script src="/static/script.js"></script>
+</body>
+</html>
