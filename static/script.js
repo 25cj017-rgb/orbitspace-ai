@@ -19,26 +19,28 @@ async function predictRisk() {
 
     const data = await response.json();
 
-    // Update Risk Assessment
-    document.getElementById("physics-risk").innerText =
-        "Physics-Based Risk: " + data.physics_based_risk;
+    // Update risks
+    document.getElementById("physicsRisk").innerText = data.physics_based_risk;
+    document.getElementById("mlRisk").innerText = data.ml_predicted_risk;
 
-    document.getElementById("ml-risk").innerText =
-        "ML-Predicted Risk: " + data.ml_predicted_risk;
+    // Update badge color
+    const setBadge = (el, risk) => {
+        el.className = "badge " + risk.toLowerCase();
+    };
 
-    // Update AI Insight
-    document.getElementById("ai-insight").innerText =
-        data.ai_insight;
+    setBadge(document.getElementById("physicsRisk"), data.physics_based_risk);
+    setBadge(document.getElementById("mlRisk"), data.ml_predicted_risk);
 
-    // Optional: show risk score if needed
-    const riskBar = document.getElementById("risk-bar");
-    if (riskBar) {
-        if (data.physics_based_risk === "High") {
-            riskBar.style.width = "90%";
-        } else if (data.physics_based_risk === "Medium") {
-            riskBar.style.width = "60%";
-        } else {
-            riskBar.style.width = "30%";
-        }
+    // Update AI insight
+    document.getElementById("aiInsight").innerText = data.ai_insight;
+
+    // Risk bar
+    const riskFill = document.getElementById("riskFill");
+    if (data.physics_based_risk === "High") {
+        riskFill.style.width = "90%";
+    } else if (data.physics_based_risk === "Medium") {
+        riskFill.style.width = "60%";
+    } else {
+        riskFill.style.width = "30%";
     }
 }
