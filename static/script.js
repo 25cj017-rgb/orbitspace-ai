@@ -1,54 +1,44 @@
 async function predictRisk() {
-    const velocity = document.getElementById("velocity").value;
-    const altitude = document.getElementById("altitude").value;
-    const size = document.getElementById("size").value;
-    const density = document.getElementById("density").value;
+    const velocity = parseFloat(document.getElementById("velocity").value);
+    const altitude = parseFloat(document.getElementById("altitude").value);
+    const size = parseFloat(document.getElementById("size").value);
+    const density = parseFloat(document.getElementById("density").value);
 
-    // Simple validation
-    if (!velocity || !altitude || !size || !density) {
-        alert("Please fill all input fields");
-        return;
-    }
-
-    const response = await fetch("http://127.0.0.1:8000/predict", {
+    const response = await fetch("/predict", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            velocity: Number(velocity),
-            altitude: Number(altitude),
-            size: Number(size),
-            density: Number(density)
+            velocity: velocity,
+            altitude: altitude,
+            size: size,
+            density: density
         })
     });
 
-    const result = await response.json();
+    const data = await response.json();
 
-    // Update UI
-    const physicsBadge = document.getElementById("physicsRisk");
-    const mlBadge = document.getElementById("mlRisk");
-    const insight = document.getElementById("aiInsight");
-    const riskFill = document.getElementById("riskFill");
+    // Update Risk Assessment
+    document.getElementById("physics-risk").innerText =
+        "Physics-Based Risk: " + data.physics_based_risk;
 
+    document.getElementById("ml-risk").innerText =
+        "ML-Predicted Risk: " + data.ml_predicted_risk;
 
-    physicsBadge.textContent = result.physics_based_risk;
-    mlBadge.textContent = result.ml_predicted_risk;
+    // Update AI Insight
+    document.getElementById("ai-insight").innerText =
+        data.ai_insight;
 
-    physicsBadge.className = "badge " + (result.physics_based_risk === "High" ? "high" : "low");
-    mlBadge.className = "badge " + (result.ml_predicted_risk === "High" ? "high" : "low");
-
-    insight.textContent = result.ai_insight;
-    // Visual risk indicator
-if (result.physics_based_risk === "High") {
-    riskFill.style.width = "100%";
-    riskFill.style.background = "#ef4444";
-} else if (result.physics_based_risk === "Medium") {
-    riskFill.style.width = "60%";
-    riskFill.style.background = "#facc15";
-} else {
-    riskFill.style.width = "30%";
-    riskFill.style.background = "#22c55e";
-}
-
+    // Optional: show risk score if needed
+    const riskBar = document.getElementById("risk-bar");
+    if (riskBar) {
+        if (data.physics_based_risk === "High") {
+            riskBar.style.width = "90%";
+        } else if (data.physics_based_risk === "Medium") {
+            riskBar.style.width = "60%";
+        } else {
+            riskBar.style.width = "30%";
+        }
+    }
 }
