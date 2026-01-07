@@ -22,15 +22,6 @@ app.add_middleware(
 # ---------------------------------
 # Serve frontend (STATIC FILES)
 # ---------------------------------
-# Folder structure:
-# Backend/
-# ├── main.py
-# ├── static/
-# │   ├── index.html
-# │   ├── style.css
-# │   └── script.js
-# ---------------------------------
-
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")
@@ -57,36 +48,75 @@ def predict_risk(data: PredictRequest):
     s = data.size
     d = data.density
 
-    # Physics-based logic
-    if v > 8.0 or h < 300 or s > 10:
+    # ---------------------------------
+    # Physics-inspired risk scoring
+    # ---------------------------------
+    risk_score = 0
+
+    # Velocity contribution
+    if v >= 12:
+        risk_score += 3
+    elif v >= 8:
+        risk_score += 2
+    elif v >= 5:
+        risk_score += 1
+
+    # Debris size contribution
+    if s >= 100:
+        risk_score += 3
+    elif s >= 50:
+        risk_score += 2
+    elif s >= 10:
+        risk_score += 1
+
+    # Altitude contribution (LEO congestion zone)
+    if 300 <= h <= 1000:
+        risk_score += 2
+    elif h < 300:
+        risk_score += 1
+
+    # Density contribution
+    if d >= 7:
+        risk_score += 2
+    elif d >= 3:
+        risk_score += 1
+
+    # ---------------------------------
+    # Final risk classification
+    # ---------------------------------
+    if risk_score >= 8:
         physics_risk = "High"
-    elif v > 7.0 or s > 7:
+    elif risk_score >= 4:
         physics_risk = "Medium"
     else:
         physics_risk = "Low"
 
-    # ML placeholder (safe)
+    # ML prediction (proxy for demo)
     ml_risk = physics_risk
 
-    # AI explanation
+    # ---------------------------------
+    # AI Insight
+    # ---------------------------------
     if physics_risk == "High":
         insight = (
-            "High collision risk detected due to unsafe orbital parameters. "
-            "Immediate monitoring or mitigation is recommended."
+            "High collision risk detected due to high relative velocity, "
+            "large debris size, dense material, and operation within a "
+            "congested low Earth orbit region. Immediate mitigation is recommended."
         )
     elif physics_risk == "Medium":
         insight = (
-            "Moderate collision risk observed. "
-            "Close monitoring is advised."
+            "Moderate collision risk observed. Certain orbital parameters "
+            "indicate potential hazards, and continuous monitoring is advised."
         )
     else:
         insight = (
-            "Low collision risk detected. "
-            "Current orbital parameters are stable."
+            "Low collision risk detected. The current orbital parameters "
+            "indicate a stable and safe trajectory."
         )
 
     return {
         "physics_based_risk": physics_risk,
         "ml_predicted_risk": ml_risk,
+        "risk_score": risk_score,
         "ai_insight": insight
     }
